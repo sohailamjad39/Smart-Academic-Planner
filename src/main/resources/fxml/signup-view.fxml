@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.sap.smartacademicplanner.SignUpController"
+            stylesheets="@/styles.css"
+            styleClass="root">
+
+    <center>
+        <VBox spacing="20" alignment="CENTER" styleClass="form-container">
+            <Label text="Create Account" styleClass="title-label"/>
+
+            <VBox spacing="15" alignment="CENTER_LEFT">
+                <TextField fx:id="nameField" promptText="Full Name" styleClass="input-field"/>
+                <TextField fx:id="emailField" promptText="Email" styleClass="input-field"/>
+                <PasswordField fx:id="passwordField" promptText="Password" styleClass="password-field"/>
+            </VBox>
+
+            <Button text="Sign Up" onAction="#handleSignUp" styleClass="sign-up-button"/>
+
+            <Label fx:id="statusLabel" styleClass="status-label"/>
+
+            <Hyperlink text="Login if you already have an account"
+                       onAction="#switchToLogin"
+                       styleClass="switch-link"/>
+        </VBox>
+    </center>
+
+</BorderPane>

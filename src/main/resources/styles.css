@@ -1,0 +1,191 @@
+/*============Signup Page============*/
+.root {
+    -fx-background-color: linear-gradient(to bottom right, #2c3e50, #3498db);
+}
+
+.form-container {
+    -fx-alignment: center;
+    -fx-spacing: 20;
+    -fx-pref-width: 400;
+}
+
+.title-label {
+    -fx-font-size: 28px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, 2);
+}
+
+.input-field {
+    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-padding: 10 10;
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-min-width: 300;
+    -fx-pref-width: 300;
+}
+
+.password-field {
+    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-padding: 10 10;
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-min-width: 300;
+    -fx-pref-width: 300;
+}
+
+.sign-up-button, .login-button {
+    -fx-background-color: linear-gradient(to right, #00c6ff, #0072ff);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 25;
+    -fx-padding: 10 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 2);
+}
+
+/*==========Login Page==========*/
+.login-button {
+    -fx-background-color: linear-gradient(to right, #27ae60, #2ecc71);
+}
+
+.status-label {
+    -fx-text-fill: #fffacd;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10;
+}
+
+.switch-link {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-underline: true;
+}
+
+/*===========Dashboard Page============*/
+.dashboard-card {
+    -fx-pref-width: 200;
+    -fx-pref-height: 100;
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-text-fill: white;
+    -fx-alignment: center;
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+}
+
+.dashboard-card:hover {
+    -fx-background-color: rgba(255,255,255,0.2);
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 15;
+}
+
+.nav-button:hover {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-radius: 10;
+}
+
+.card {
+    -fx-pref-width: 150;
+    -fx-pref-height: 100;
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-alignment: center;
+    -fx-spacing: 5;
+}
+
+.card-title {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.card-value {
+    -fx-text-fill: #00c6ff;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+/*======= Dashboard Navigation Action Buttons =======*/
+.nav-action-button {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 8 16;
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-radius: 25;
+    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 0);
+    -fx-cursor: hand;
+}
+
+.nav-action-button:hover {
+    -fx-background-color: rgba(255,255,255,0.2);
+    -fx-border-color: rgba(255,255,255,0.5);
+}
+
+/*======= User Dropdown Menu =======*/
+.user-menu {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 5 10;
+    -fx-cursor: hand;
+}
+
+.user-menu:hover {
+    -fx-background-color: rgba(255,255,255,0.1);
+}
+
+/* Override MenuItem globally */
+.user-menu .menu-item {
+    -fx-background-color: #0077b6; /* Dark background */
+    -fx-text-fill: black; /* White text */
+    -fx-font-size: 16px;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.user-menu .menu-item:hover {
+    -fx-background-color: #4a5568; /* Slightly lighter dark gray */
+    -fx-text-fill: white;
+}
+
+.user-menu .menu-item:pressed {
+    -fx-background-color: #6b7683;
+    -fx-text-fill: white;
+}
+
+.user-menu .separator {
+    -fx-background-color: rgba(255,255,255,0.2);
+}
+
+/*======= Edit Profile Specific =======*/
+
+.edit-profile-card {
+    -fx-alignment: center;
+    -fx-spacing: 20;
+    -fx-pref-width: 400;
+}
+
+.edit-profile-title {
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
