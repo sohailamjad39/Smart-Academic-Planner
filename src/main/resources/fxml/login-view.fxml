@@ -2,27 +2,38 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.sap.smartacademicplanner.LoginController"
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.sap.smartacademicplanner.LoginController"
             stylesheets="@/styles.css"
             styleClass="root">
 
+    <!-- Center Content -->
     <center>
         <VBox spacing="20" alignment="CENTER" styleClass="form-container">
-            <Label text="Login" styleClass="title-label"/>
+            <Label text="Login to EduPlanner" styleClass="title-label"/>
 
-            <VBox spacing="15" alignment="CENTER_LEFT">
+            <!-- Email Field -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Email:" style="-fx-text-fill: white; -fx-min-width: 100;" />
                 <TextField fx:id="emailField" promptText="Email" styleClass="input-field"/>
-                <PasswordField fx:id="passwordField" promptText="Password" styleClass="password-field"/>
-            </VBox>
+            </HBox>
 
+            <!-- Password Field -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Password:" style="-fx-text-fill: white; -fx-min-width: 100;" />
+                <PasswordField fx:id="passwordField" promptText="Password" styleClass="password-field"/>
+            </HBox>
+
+            <!-- Login Button -->
             <Button text="Login" onAction="#handleLogin" styleClass="login-button"/>
 
+            <!-- Status Label -->
             <Label fx:id="statusLabel" styleClass="status-label"/>
 
-            <Hyperlink text="Signup if you don't have an account"
-                       onAction="#switchToSignUp"
-                       styleClass="switch-link"/>
+            <!-- Sign Up Link -->
+            <Hyperlink text="Signup if you don't have an account" onAction="#switchToSignUp" styleClass="switch-link"/>
         </VBox>
     </center>
 

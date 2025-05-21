@@ -9,7 +9,7 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         AppNavigator.setStage(stage);
-        AppNavigator.navigateTo("signup-view.fxml", "Sign Up", 400, 600);
+        AppNavigator.navigateTo("signup-view.fxml", "Sign Up", 500, 600);
         stage.setResizable(false);
     }
 

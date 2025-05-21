@@ -65,6 +65,73 @@ public class AppNavigator {
         }
     }
 
+    public static void navigateToChangePassword(String userEmail, String userName) {
+        currentPage = "/fxml/change-password-view.fxml";
+
+        try {
+            FXMLLoader loader = new FXMLLoader(AppNavigator.class.getResource(currentPage));
+            BorderPane view = loader.load();
+
+            Scene scene = new Scene(view, 500, 600);
+            mainStage.setScene(scene);
+            mainStage.setTitle("EduPlanner | Change Password");
+            mainStage.centerOnScreen();
+
+            // Pass user data to controller
+            ChangePasswordController controller = loader.getController();
+            if (controller != null) {
+                controller.setUserData(userName, userEmail);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void navigateToPlanWeek(String userEmail, String userName) {
+        currentPage = "/fxml/plan-week-view.fxml";
+
+        try {
+            FXMLLoader loader = new FXMLLoader(AppNavigator.class.getResource(currentPage));
+            BorderPane view = loader.load();
+
+            Scene scene = new Scene(view, 500, 600);
+            mainStage.setScene(scene);
+            mainStage.setTitle("EduPlanner | Weekly Planner");
+            mainStage.centerOnScreen();
+
+            PlanWeekController controller = loader.getController();
+            if (controller != null) {
+                controller.setUserData(userName, userEmail);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void navigateToAddTask(String userEmail, String userName) {
+        currentPage = "/fxml/add-task-view.fxml";
+
+        try {
+            FXMLLoader loader = new FXMLLoader(AppNavigator.class.getResource(currentPage));
+            BorderPane view = loader.load();
+
+            Scene scene = new Scene(view, 500, 600);
+            mainStage.setScene(scene);
+            mainStage.setTitle("EduPlanner | Add New Task");
+            mainStage.centerOnScreen();
+
+            AddTaskController controller = loader.getController();
+            if (controller != null) {
+//                controller.setUserData(userName, userEmail);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void updateDashboardName(String name, String email) {
         try {
             FXMLLoader loader = new FXMLLoader(AppNavigator.class.getResource("/fxml/dashboard-view.fxml"));

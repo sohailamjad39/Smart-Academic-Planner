@@ -80,7 +80,7 @@ public class DashboardController {
     @FXML
     private void changePassword() {
         navigationStack.push(currentPage);
-        loadPage("/fxml/change-password-view.fxml", "Change Password");
+        AppNavigator.navigateToChangePassword(currentUserEmail, welcomeLabel.getText().replace("Welcome ", ""));
     }
 
     @FXML
@@ -98,7 +98,7 @@ public class DashboardController {
     @FXML
     private void startWeeklyPlanning() {
         navigationStack.push(currentPage);
-        loadPage("plan-week-view.fxml", "Plan Your Week");
+        AppNavigator.navigateToPlanWeek(currentUserEmail, welcomeLabel.getText().replace("Welcome ", ""));
     }
 
     @FXML
@@ -134,7 +134,7 @@ public class DashboardController {
     @FXML
     private void addNewTask() {
         navigationStack.push(currentPage);
-        loadPage("add-task-view.fxml", "Add New Task");
+        AppNavigator.navigateToAddTask(currentUserEmail, welcomeLabel.getText().replace("Welcome ", ""));
     }
 
     @FXML

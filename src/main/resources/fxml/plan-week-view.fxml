@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.sap.smartacademicplanner.PlanWeekController"
+            stylesheets="@/styles.css"
+            styleClass="root">
+
+    <!-- Top Navigation -->
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT"
+              style="-fx-padding: 10 20; -fx-background-color: #2c3e50;">
+            <Label text="📘 EduPlanner" style="-fx-font-size: 24px; -fx-text-fill: white;" />
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Button text="⬅ Back to Dashboard" onAction="#goToDashboard" styleClass="switch-link"/>
+        </HBox>
+    </top>
+
+    <!-- Center Form -->
+    <center>
+        <VBox spacing="20" alignment="CENTER" styleClass="form-container">
+            <Label text="Plan Your Week" styleClass="title-label"/>
+
+            <!-- Hours Per Day -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Free Hours / Day:" style="-fx-text-fill: white; -fx-min-width: 160;" />
+                <TextField fx:id="hoursField" promptText="e.g., 4" styleClass="input-field"/>
+            </HBox>
+
+            <!-- Number of Assignments -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Number of Assignments:" style="-fx-text-fill: white; -fx-min-width: 160;" />
+                <TextField fx:id="assignCountField" promptText="e.g., 3" styleClass="input-field"/>
+            </HBox>
+
+            <!-- Number of Quizzes -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Number of Quizzes:" style="-fx-text-fill: white; -fx-min-width: 160;" />
+                <TextField fx:id="quizCountField" promptText="e.g., 2" styleClass="input-field"/>
+            </HBox>
+
+            <!-- Submit Button -->
+            <Button text="📅 Generate Plan" onAction="#generatePlan" styleClass="sign-up-button"/>
+
+            <!-- Status Label -->
+            <Label fx:id="statusLabel" styleClass="status-label"/>
+
+            <!-- Optional: Add styleClass if you define one in CSS -->
+            <TextArea fx:id="planOutputArea"
+                      editable="false"
+                      style="-fx-text-fill: #000000; -fx-font-size: 14px;"
+                      styleClass="input-field"/>
+        </VBox>
+    </center>
+
+</BorderPane>

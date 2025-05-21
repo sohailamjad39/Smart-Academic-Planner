@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.collections.FXCollections?>
+
+<?import java.lang.String?>
+<?import javafx.collections.ObservableList?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.sap.smartacademicplanner.AddTaskController"
+            stylesheets="@/styles.css"
+            styleClass="root">
+
+    <!-- Top Navigation -->
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT"
+              style="-fx-padding: 10 20; -fx-background-color: #2c3e50;">
+            <Label text="📚 EduPlanner" style="-fx-font-size: 24px; -fx-text-fill: white;" />
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Button text="⬅ Back to Dashboard" onAction="#goToDashboard" styleClass="switch-link"/>
+        </HBox>
+    </top>
+
+    <!-- Center Form -->
+    <center>
+        <VBox spacing="20" alignment="CENTER" styleClass="form-container">
+            <Label text="Add New Task" styleClass="title-label"/>
+
+            <!-- Subject Text Field -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Subject:" style="-fx-text-fill: white; -fx-min-width: 120;" />
+                <TextField fx:id="subjectField" promptText="e.g., Math, CS" styleClass="task-input-field"/>
+            </HBox>
+
+            <!-- Task Type Dropdown -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Task Type:" style="-fx-text-fill: white; -fx-min-width: 120;" />
+                <ComboBox fx:id="taskTypeCombo" styleClass="task-combo-box"
+                          promptText="Select Task Type"/>
+            </HBox>
+
+            <!-- Due Date -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Due Date:" style="-fx-text-fill: white; -fx-min-width: 120;" />
+                <DatePicker fx:id="dueDatePicker" styleClass="task-input-field"/>
+            </HBox>
+
+            <!-- Estimated Hours -->
+            <HBox spacing="10" alignment="CENTER_LEFT"/>
+                <Label text="Est. Hours:" style="-fx-text-fill: white; -fx-min-width: 120;" />
+            <TextField fx:id="estHoursField"
+                       promptText="e.g., 3 or 3.5"
+                       styleClass="task-input-field"
+                       onKeyTyped="#onHoursInput"/>
+
+            <!-- Submit Button -->
+            <Button text="✅ Save Task" onAction="#saveTask" styleClass="sign-up-button"/>
+
+            <!-- Status Label -->
+            <Label fx:id="statusLabel" styleClass="status-label"/>
+
+        </VBox>
+    </center>
+
+</BorderPane>
