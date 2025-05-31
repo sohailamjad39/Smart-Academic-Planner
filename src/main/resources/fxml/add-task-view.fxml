@@ -50,10 +50,8 @@
             <!-- Estimated Hours -->
             <HBox spacing="10" alignment="CENTER_LEFT"/>
                 <Label text="Est. Hours:" style="-fx-text-fill: white; -fx-min-width: 120;" />
-            <TextField fx:id="estHoursField"
-                       promptText="e.g., 3 or 3.5"
-                       styleClass="task-input-field"
-                       onKeyTyped="#onHoursInput"/>
+            <TextField fx:id="estHoursField" promptText="e.g., 3 or 3.5"
+                       styleClass="task-input-field"/>
 
             <!-- Submit Button -->
             <Button text="✅ Save Task" onAction="#saveTask" styleClass="sign-up-button"/>

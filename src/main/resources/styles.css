@@ -1,6 +1,8 @@
 /*============Signup Page============*/
 .root {
     -fx-background-color: linear-gradient(to bottom right, #2c3e50, #3498db);
+    -fx-padding: 10px;
+    -fx-background-color: #1f1f1f;
 }
 
 .form-container {
@@ -10,10 +12,9 @@
 }
 
 .title-label {
-    -fx-font-size: 28px;
+    -fx-font-size: 20px;
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, 2);
 }
 
 .input-field {
@@ -21,9 +22,9 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-width: 1;
-    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-padding: 10 10;
-    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-min-width: 300;
@@ -35,9 +36,9 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-width: 1;
-    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-padding: 10 10;
-    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-min-width: 300;
@@ -50,7 +51,7 @@
     -fx-font-weight: bold;
     -fx-background-radius: 25;
     -fx-padding: 10 20;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0, 0, 2);
 }
 
 /*==========Login Page==========*/
@@ -62,7 +63,7 @@
     -fx-text-fill: #fffacd;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
-    -fx-padding: 10;
+    -fx-padding: 10px;
 }
 
 .switch-link {
@@ -75,9 +76,9 @@
 .dashboard-card {
     -fx-pref-width: 200;
     -fx-pref-height: 100;
-    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-background-radius: 15;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 0);
     -fx-text-fill: white;
     -fx-alignment: center;
     -fx-font-size: 16px;
@@ -85,7 +86,7 @@
 }
 
 .dashboard-card:hover {
-    -fx-background-color: rgba(255,255,255,0.2);
+    -fx-background-color: rgba(255, 255, 255, 0.2);
 }
 
 .nav-button {
@@ -97,16 +98,16 @@
 }
 
 .nav-button:hover {
-    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-background-radius: 10;
 }
 
 .card {
     -fx-pref-width: 150;
     -fx-pref-height: 100;
-    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-background-radius: 15;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 0);
     -fx-alignment: center;
     -fx-spacing: 5;
 }
@@ -125,20 +126,26 @@
 
 /*======= Dashboard Navigation Action Buttons =======*/
 .nav-action-button {
-    -fx-text-fill: white;
     -fx-font-size: 14px;
-    -fx-padding: 8 16;
-    -fx-background-color: rgba(255,255,255,0.1);
-    -fx-background-radius: 25;
-    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-border-width: 1;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 5, 0, 0, 0);
     -fx-cursor: hand;
+    -fx-background-color: #444444; /* Dark gray */
+    -fx-text-fill: white;
+    -fx-padding: 10 20;
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 0);
 }
 
 .nav-action-button:hover {
-    -fx-background-color: rgba(255,255,255,0.2);
-    -fx-border-color: rgba(255,255,255,0.5);
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-border-color: rgba(255, 255, 255, 0.5);
+    -fx-background-color: #666666;
+}
+
+.nav-action-button:pressed {
+    -fx-background-color: #555555;
 }
 
 /*======= User Dropdown Menu =======*/
@@ -150,7 +157,7 @@
 }
 
 .user-menu:hover {
-    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Override MenuItem globally */
@@ -173,7 +180,7 @@
 }
 
 .user-menu .separator {
-    -fx-background-color: rgba(255,255,255,0.2);
+    -fx-background-color: rgba(255, 255, 255, 0.2);
 }
 
 /*======= Edit Profile Specific =======*/
@@ -196,9 +203,9 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-width: 1;
-    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-padding: 10 10;
-    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-min-width: 300;
@@ -211,9 +218,9 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-width: 1;
-    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-padding: 10 10;
-    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-min-width: 300;
@@ -227,9 +234,9 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-width: 1;
-    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-padding: 10 10;
-    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-min-width: 300;
@@ -241,7 +248,7 @@
     -fx-background-radius: 10;
     -fx-border-radius: 10;
     -fx-border-width: 1;
-    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-padding: 10 10;
     -fx-text-fill: white;
     -fx-font-size: 14px;
@@ -263,3 +270,33 @@
 .task-combo-box .list-cell:hover {
     -fx-background-color: #4a5568;
 }
+
+.task-table {
+    -fx-table-cell-border-visible: false;
+    -fx-table-header-border-invisible: true;
+    -fx-background-color: #292929;
+    -fx-text-base-color: white;
+    -fx-border-color: #444;
+}
+
+.task-table .table-row-cell:selected {
+    -fx-background-color: #00bfff33;
+}
+
+.summary-card {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-padding: 15px;
+    -fx-font-size: 16px;
+    -fx-alignment: CENTER;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+}
+
+.input-field-small {
+    -fx-pref-width: 200;
+    -fx-pref-height: 30;
+    -fx-font-size: 14px;
+    -fx-padding: 5px 10px;
+    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+}
+

@@ -4,36 +4,93 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-import java.util.Stack;
-
+import java.io.IOException;
+import java.sql.*;
 
 public class DashboardController {
 
+    @FXML private Label welcomeLabel;
+    @FXML private Label totalTasksLabel, inProgressLabel, missedLabel, completedLabel, dueSoonLabel;
+
+    // Called on page load
     @FXML
-    private Label welcomeLabel;
-    @FXML
-    private Label totalTasksLabel, inProgressLabel, missedLabel, completedLabel, dueSoonLabel;
+    public void initialize() {
+        if (UserSession.isLoggedIn()) {
+            String userName = UserSession.getCurrentUserName();
+            welcomeLabel.setText("Welcome " + userName);
+            loadTaskStats(); // Load real data instead of dummy values
+        } else {
+            welcomeLabel.setText("Welcome Guest");
+        }
+    }
 
-    // Navigation history stack
-    private final Stack<String> navigationStack = new Stack<>();
-    private String currentPage = "dashboard-view.fxml";
-    private String currentUserEmail;
-
-
+    // Method to manually set username (used during login)
     public void setUserName(String name, String email) {
         System.out.println("Setting welcome message to: Welcome " + name);
-        System.out.println("welcomeLabel is null? " + (welcomeLabel == null));
+        welcomeLabel.setText("Welcome " + name);
+        UserSession.login(name, email); // Update global session
+        loadTaskStats(); // Load real stats after login
+    }
 
-        if (welcomeLabel != null) {
-            welcomeLabel.setText("Welcome " + name);
-        } else {
-            System.out.println("❌ welcomeLabel is null! fx:id might be missing or mismatched.");
+    private void loadTaskStats() {
+        try (Connection conn = DBConnection.getConnection()) {
+            int userID = getUserIDFromEmail(conn, UserSession.getCurrentUserEmail());
+
+            if (userID == -1) {
+                System.out.println("❌ User not found!");
+                return;
+            }
+
+            // Total tasks
+            totalTasksLabel.setText(getCount(conn, "SELECT COUNT(*) FROM Tasks WHERE UserID = ?", userID));
+
+            // Completed tasks
+            completedLabel.setText(getCount(conn, """
+                SELECT COUNT(*) FROM Tasks t
+                JOIN TaskStatus ts ON t.TaskID = ts.TaskID
+                WHERE ts.IsCompleted = 1 AND t.UserID = ?""", userID));
+
+            // In progress tasks
+            inProgressLabel.setText(getCount(conn, """
+                SELECT COUNT(*) FROM Tasks t
+                JOIN TaskStatus ts ON t.TaskID = ts.TaskID
+                WHERE ts.IsCompleted = 0 AND DueDate > GETDATE() AND t.UserID = ?""", userID));
+
+            // Missed tasks
+            missedLabel.setText(getCount(conn, """
+                SELECT COUNT(*) FROM Tasks t
+                JOIN TaskStatus ts ON t.TaskID = ts.TaskID
+                WHERE ts.IsCompleted = 0 AND DueDate <= GETDATE() AND t.UserID = ?""", userID));
+
+            // Due soon tasks (next 7 days)
+            dueSoonLabel.setText(getCount(conn, """
+                SELECT COUNT(*) FROM Tasks t
+                WHERE DueDate BETWEEN GETDATE() AND DATEADD(DAY, 7, GETDATE())
+                AND t.UserID = ?""", userID));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            loadDummyData(); // Fallback
         }
+    }
 
-        this.currentUserEmail = email;
-        loadDummyData();
+    private int getUserIDFromEmail(Connection conn, String email) throws SQLException {
+        String sql = "SELECT UserID FROM Users WHERE Email = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, email);
+
+        ResultSet rs = stmt.executeQuery();
+        return rs.next() ? rs.getInt("UserID") : -1;
+    }
+
+    private String getCount(Connection conn, String query, int userID) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement(query);
+        stmt.setInt(1, userID);
+        ResultSet rs = stmt.executeQuery();
+        return rs.next() ? rs.getString(1) : "0";
     }
 
     private void loadDummyData() {
@@ -44,105 +101,107 @@ public class DashboardController {
         dueSoonLabel.setText("2");
     }
 
-    // Navigation methods
     @FXML
-    private void goBack() {
-        if (!navigationStack.isEmpty()) {
-            currentPage = navigationStack.pop();
-            loadPage(currentPage, "Dashboard");
+    private void addNewTask() {
+        if (!UserSession.isLoggedIn()) {
+            AppNavigator.navigateToLogin();
+            return;
         }
-    }
-
-    @FXML
-    private void goForward() {
-        // Future enhancement: forward stack
-    }
-
-    @FXML
-    private void editProfile() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/edit-profile-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 500, 600);
-            Stage stage = new Stage();
-            stage.setTitle("EduPlanner | Edit Profile");
-            stage.setScene(scene);
-            stage.show();
-
-            // Pass user data to edit profile controller
-            EditProfileController controller = fxmlLoader.getController();
-            controller.setUserData(welcomeLabel.getText().replace("Welcome ", ""), currentUserEmail); // Make sure to store and pass email too
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void changePassword() {
-        navigationStack.push(currentPage);
-        AppNavigator.navigateToChangePassword(currentUserEmail, welcomeLabel.getText().replace("Welcome ", ""));
-    }
-
-    @FXML
-    private void logout() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/login-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 500, 600);
-            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
-            stage.setScene(scene);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void startWeeklyPlanning() {
-        navigationStack.push(currentPage);
-        AppNavigator.navigateToPlanWeek(currentUserEmail, welcomeLabel.getText().replace("Welcome ", ""));
+        AppNavigator.navigateToAddTask();
     }
 
     @FXML
     private void viewGoals() {
-        navigationStack.push(currentPage);
-        loadPage("goals-view.fxml", "My Goals");
+        if (!UserSession.isLoggedIn()) {
+            AppNavigator.navigateToLogin();
+            return;
+        }
+        AppNavigator.navigateToMyGoals();
+    }
+
+    @FXML
+    private void startWeeklyPlanning() {
+        if (!UserSession.isLoggedIn()) {
+            AppNavigator.navigateToLogin();
+            return;
+        }
+        AppNavigator.navigateToPlanWeek();
+    }
+
+    @FXML
+    private void changePassword() {
+        if (!UserSession.isLoggedIn()) {
+            AppNavigator.navigateToLogin();
+            return;
+        }
+        AppNavigator.navigateToChangePassword();
+    }
+
+    @FXML
+    private void editProfile() {
+        if (!UserSession.isLoggedIn()) {
+            AppNavigator.navigateToLogin();
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/edit-profile-view.fxml"));
+            BorderPane editRoot = loader.load();
+
+            EditProfileController controller = loader.getController();
+            if (controller != null) {
+                controller.setUserData(UserSession.getCurrentUserName(), UserSession.getCurrentUserEmail());
+            }
+
+            Scene scene = new Scene(editRoot, 800, 600);
+            Stage stage = (Stage) welcomeLabel.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void logout() {
+        UserSession.logout();
+        AppNavigator.navigateToLogin();
+    }
+
+    @FXML
+    private void goBack() {
+        AppNavigator.goBack();
+    }
+
+    @FXML
+    private void goForward() {
+        System.out.println("Go forward button clicked");
     }
 
     @FXML
     private void viewAssignments() {
-        navigationStack.push(currentPage);
-        loadPage("assignments-view.fxml", "Assignments");
+        if (!UserSession.isLoggedIn()) {
+            AppNavigator.navigateToLogin();
+            return;
+        }
+        AppNavigator.navigateToAssignments();
     }
 
     @FXML
     private void viewOverview() {
-        navigationStack.push(currentPage);
-        loadPage("overview-view.fxml", "Overview");
+        if (!UserSession.isLoggedIn()) {
+            AppNavigator.navigateToLogin();
+            return;
+        }
+        AppNavigator.navigateToOverview();
     }
 
     @FXML
     private void viewHistory() {
-        navigationStack.push(currentPage);
-        loadPage("history-view.fxml", "History");
-    }
-
-    @FXML
-    private void openSettings() {
-        navigationStack.push(currentPage);
-        loadPage("settings-view.fxml", "Settings");
-    }
-
-    @FXML
-    private void addNewTask() {
-        navigationStack.push(currentPage);
-        AppNavigator.navigateToAddTask(currentUserEmail, welcomeLabel.getText().replace("Welcome ", ""));
-    }
-
-    @FXML
-    public void initialize() {
-        System.out.println("Intialized DashboardController");
-    }
-
-    private void loadPage(String fxmlFile, String title) {
-        AppNavigator.navigateTo(fxmlFile, title, 400, 600);
+        if (!UserSession.isLoggedIn()) {
+            AppNavigator.navigateToLogin();
+            return;
+        }
+        AppNavigator.navigateToHistory();
     }
 }

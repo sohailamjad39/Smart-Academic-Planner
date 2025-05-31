@@ -22,15 +22,9 @@
 
             <Pane HBox.hgrow="ALWAYS"/>
 
-            <!-- Navigation Buttons -->
-            <HBox spacing="15">
-                <Button text="⬅ Go Back" onAction="#goBack" styleClass="nav-action-button"/>
-                <Button text="Go Forward ➤" onAction="#goForward" styleClass="nav-action-button"/>
-            </HBox>
-
             <!-- Welcome Message -->
             <Label fx:id="welcomeLabel" text="Welcome Guest"
-                   style="-fx-font-size: 16px; -fx-text-fill: white; -fx-margin-right: 20;" />
+                   style="-fx-font-size: 16px; -fx-text-fill: white; -fx-margin-right: 20;"/>
 
             <!-- User Icon Dropdown -->
             <MenuButton styleClass="user-menu">
@@ -40,7 +34,7 @@
                 <items>
                     <MenuItem text="Edit Profile" onAction="#editProfile"/>
                     <MenuItem text="Change Password" onAction="#changePassword"/>
-                    <SeparatorMenuItem />
+                    <SeparatorMenuItem/>
                     <MenuItem text="Logout" onAction="#logout"/>
                 </items>
             </MenuButton>
@@ -57,7 +51,6 @@
             <Button text="📚 Assignments" onAction="#viewAssignments" styleClass="nav-button"/>
             <Button text="📊 Overview" onAction="#viewOverview" styleClass="nav-button"/>
             <Button text="📁 History" onAction="#viewHistory" styleClass="nav-button"/>
-            <Button text="⚙ Settings" onAction="#openSettings" styleClass="nav-button"/>
         </VBox>
     </left>
 

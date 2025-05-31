@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+
+<?import java.lang.String?>
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.sap.smartacademicplanner.MyGoalsController"
+            stylesheets="@/styles.css"
+            styleClass="root">
+
+    <!-- Top Navigation -->
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT"
+              style="-fx-padding: 10 20; -fx-background-color: #2c3e50;">
+            <Label text="✅ EduPlanner" style="-fx-font-size: 24px; -fx-text-fill: white;" />
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Button text="⬅ Back to Dashboard" onAction="#goToDashboard" styleClass="switch-link"/>
+        </HBox>
+    </top>
+
+    <!-- Center Content -->
+    <center>
+        <VBox spacing="20" alignment="TOP_CENTER" style="-fx-padding: 20;">
+
+            <Label text="Your Weekly Goals" style="-fx-font-size: 24px; -fx-text-fill: white;" />
+
+            <!-- Task Table -->
+            <TableView fx:id="taskTable" styleClass="task-table" prefWidth="700" prefHeight="300">
+                <columns>
+                    <TableColumn text="Subject" fx:id="subjectCol" prefWidth="150"/>
+                    <TableColumn text="Task Type" fx:id="taskTypeCol" prefWidth="120"/>
+                    <TableColumn text="Due Date" fx:id="dueDateCol" prefWidth="120"/>
+                    <TableColumn text="Est. Hours" fx:id="estHoursCol" prefWidth="100"/>
+                    <TableColumn text="Priority" fx:id="priorityCol" prefWidth="100"/>
+                    <TableColumn text="Status" fx:id="statusCol" prefWidth="100"/>
+                </columns>
+            </TableView>
+
+            <!-- Task Details Section -->
+            <TitledPane text="Task Details" expanded="false">
+                <VBox spacing="10" style="-fx-padding: 10;">
+                    <HBox spacing="10">
+                        <Label text="Subject:" style="-fx-font-weight: bold; -fx-min-width: 100;" />
+                        <Label fx:id="subjectDetail" text="N/A" style="-fx-font-weight: normal;" />
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="Task Type:" style="-fx-font-weight: bold; -fx-min-width: 100;" />
+                        <Label fx:id="taskTypeDetail" text="N/A" />
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="Due Date:" style="-fx-font-weight: bold; -fx-min-width: 100;" />
+                        <Label fx:id="dueDateDetail" text="N/A" />
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="Est. Hours:" style="-fx-font-weight: bold; -fx-min-width: 100;" />
+                        <Label fx:id="estHoursDetail" text="N/A" />
+                    </HBox>
+                    <HBox spacing="10">
+                        <Label text="Priority:" style="-fx-font-weight: bold; -fx-min-width: 100;" />
+                        <ComboBox fx:id="priorityCombo" promptText="Select Priority" styleClass="task-combo-box"/>
+                    </HBox>
+                    <HBox spacing="10">
+                        <Button text="✔️ Mark Completed" onAction="#markAsCompleted" styleClass="nav-action-button"/>
+                        <Button text="🗑️ Delete" onAction="#deleteTask" styleClass="nav-action-button"/>
+                        <Button text="⬆️ High Priority" onAction="#setHighPriority" styleClass="nav-action-button"/>
+                        <Button text="⬇️ Low Priority" onAction="#setLowPriority" styleClass="nav-action-button"/>
+                    </HBox>
+                </VBox>
+            </TitledPane>
+
+        </VBox>
+    </center>
+
+</BorderPane>

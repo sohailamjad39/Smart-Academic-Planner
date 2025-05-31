@@ -37,8 +37,24 @@ public class LoginController {
 
             if (rs.next()) {
                 String userName = rs.getString("Name");
-                String userEmail = email; // Get email from login input
-                openDashboard(userName, userEmail); // Now this will be used
+                String userEmail = email;
+
+                // Save session
+                UserSession.login(userName, userEmail);
+
+                // Navigate to dashboard
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dashboard-view.fxml"));
+                BorderPane dashboardRoot = loader.load();
+
+                DashboardController controller = loader.getController();
+                if (controller != null) {
+                    controller.setUserName(userName, userEmail);
+                }
+
+                Scene scene = new Scene(dashboardRoot, 800, 600);
+                Stage stage = (Stage) statusLabel.getScene().getWindow();
+                stage.setScene(scene);
+                stage.show();
             } else {
                 statusLabel.setText("❌ Invalid credentials!");
             }
@@ -48,32 +64,13 @@ public class LoginController {
         }
     }
 
-    private void openDashboard(String userName, String userEmail) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dashboard-view.fxml"));
-            BorderPane dashboardRoot = loader.load();
-
-            DashboardController controller = loader.getController();
-            System.out.println("Got controller: " + controller); // Should print something like com.sap.smartacademicplanner.DashboardController@xxxxx
-
-            if (controller != null) {
-                controller.setUserName(userName, userEmail);
-            }
-
-            Scene scene = new Scene(dashboardRoot, 800, 600);
-            Stage stage = (Stage) statusLabel.getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @FXML
     private void switchToSignUp() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/signup-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), 500, 600);
+            BorderPane signUpRoot = fxmlLoader.load();
+
+            Scene scene = new Scene(signUpRoot, 500, 600);
             Stage stage = (Stage) statusLabel.getScene().getWindow();
             stage.setScene(scene);
         } catch (Exception e) {

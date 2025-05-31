@@ -15,44 +15,82 @@
               style="-fx-padding: 10 20; -fx-background-color: #2c3e50;">
             <Label text="📘 EduPlanner" style="-fx-font-size: 24px; -fx-text-fill: white;" />
             <Pane HBox.hgrow="ALWAYS"/>
-            <Button text="⬅ Back to Dashboard" onAction="#goToDashboard" styleClass="switch-link"/>
+            <Button text="⬅ Back" onAction="#goToDashboard" styleClass="switch-link"/>
         </HBox>
     </top>
 
     <!-- Center Form -->
     <center>
-        <VBox spacing="20" alignment="CENTER" styleClass="form-container">
-            <Label text="Plan Your Week" styleClass="title-label"/>
+        <VBox spacing="20" alignment="TOP_CENTER" style="-fx-padding: 20; -fx-max-width: 600; -fx-width: 500;">
 
-            <!-- Hours Per Day -->
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Free Hours / Day:" style="-fx-text-fill: white; -fx-min-width: 160;" />
-                <TextField fx:id="hoursField" promptText="e.g., 4" styleClass="input-field"/>
-            </HBox>
+            <Label text="📅 Plan Your Week" styleClass="title-label"/>
 
-            <!-- Number of Assignments -->
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Number of Assignments:" style="-fx-text-fill: white; -fx-min-width: 160;" />
-                <TextField fx:id="assignCountField" promptText="e.g., 3" styleClass="input-field"/>
-            </HBox>
+            <!-- Input Fields Section -->
+            <GridPane hgap="10" vgap="10" alignment="CENTER">
+                <!-- Column Constraints -->
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="40"/>
+                    <ColumnConstraints percentWidth="60"/>
+                </columnConstraints>
 
-            <!-- Number of Quizzes -->
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Number of Quizzes:" style="-fx-text-fill: white; -fx-min-width: 160;" />
-                <TextField fx:id="quizCountField" promptText="e.g., 2" styleClass="input-field"/>
-            </HBox>
+                <!-- Row Constraints -->
+                <rowConstraints>
+                    <RowConstraints />
+                    <RowConstraints />
+                    <RowConstraints />
+                    <RowConstraints />
+                    <RowConstraints />
+                    <RowConstraints />
+                </rowConstraints>
 
-            <!-- Submit Button -->
-            <Button text="📅 Generate Plan" onAction="#generatePlan" styleClass="sign-up-button"/>
+                <!-- Weekday Hours -->
+                <Label text="Free Hours (Mon-Fri):" style="-fx-text-fill: white;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="weekdayHoursField" promptText="e.g., 4" styleClass="input-field-small" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <!-- Weekend Hours -->
+                <Label text="Free Hours (Sat-Sun):" style="-fx-text-fill: white;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="weekendHoursField" promptText="e.g., 6" styleClass="input-field-small" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <!-- Number of Assignments -->
+                <Label text="Assignments:" style="-fx-text-fill: white;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="assignCountField" promptText="e.g., 3" styleClass="input-field-small" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <!-- Quizzes -->
+                <Label text="Quizzes:" style="-fx-text-fill: white;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <TextField fx:id="quizCountField" promptText="e.g., 2" styleClass="input-field-small" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                <!-- Projects -->
+                <Label text="Projects:" style="-fx-text-fill: white;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <TextField fx:id="projectCountField" promptText="e.g., 1" styleClass="input-field-small" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                <!-- Exams -->
+                <Label text="Exams:" style="-fx-text-fill: white;" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <TextField fx:id="examCountField" promptText="e.g., 1" styleClass="input-field-small" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+            </GridPane>
+
+            <!-- Generate Button -->
+            <Button text="📅 Generate Schedule" onAction="#generatePlan" styleClass="sign-up-button" prefWidth="200"/>
 
             <!-- Status Label -->
             <Label fx:id="statusLabel" styleClass="status-label"/>
 
-            <!-- Optional: Add styleClass if you define one in CSS -->
-            <TextArea fx:id="planOutputArea"
-                      editable="false"
-                      style="-fx-text-fill: #000000; -fx-font-size: 14px;"
-                      styleClass="input-field"/>
+            <!-- Weekly Schedule Table -->
+            <TableView fx:id="scheduleTable" styleClass="task-table" prefWidth="700" prefHeight="250">
+                <columns>
+                    <TableColumn text="Day" fx:id="dayCol" prefWidth="100"/>
+                    <TableColumn text="Task" fx:id="taskCol" prefWidth="200"/>
+                    <TableColumn text="Type" fx:id="typeCol" prefWidth="100"/>
+                    <TableColumn text="Suggested Time" fx:id="timeCol" prefWidth="150"/>
+                    <TableColumn text="Priority" fx:id="priorityCol" prefWidth="150"/>
+                </columns>
+            </TableView>
+
+            <!-- Action Buttons -->
+            <HBox spacing="15" alignment="CENTER">
+                <Button text="💾 Save Schedule" onAction="#saveSchedule" styleClass="nav-action-button"/>
+                <Button text="🔄 Reset" onAction="#resetFields" styleClass="nav-action-button"/>
+            </HBox>
+
         </VBox>
     </center>
 
