@@ -39,11 +39,10 @@
                     <RowConstraints percentHeight="50"/>
                 </rowConstraints>
 
-                <!-- Row 0 -->
-                <Label GridPane.rowIndex="0" GridPane.columnIndex="0" text="Total Tasks: 12" styleClass="summary-card" />
-                <Label GridPane.rowIndex="0" GridPane.columnIndex="1" text="Completed: 8" styleClass="summary-card" />
-                <Label GridPane.rowIndex="0" GridPane.columnIndex="2" text="Pending: 3" styleClass="summary-card" />
-                <Label GridPane.rowIndex="0" GridPane.columnIndex="3" text="Due Soon: 2" styleClass="summary-card" />
+                <Label fx:id="totalTasksLabel" GridPane.rowIndex="0" GridPane.columnIndex="0" text="Total Tasks: 0" styleClass="summary-card"/>
+                <Label fx:id="completedLabel" GridPane.rowIndex="0" GridPane.columnIndex="1" text="Completed: 0" styleClass="summary-card"/>
+                <Label fx:id="pendingLabel" GridPane.rowIndex="0" GridPane.columnIndex="2" text="Pending: 0" styleClass="summary-card"/>
+                <Label fx:id="dueSoonLabel" GridPane.rowIndex="0" GridPane.columnIndex="3" text="Due Soon: 0" styleClass="summary-card"/>
 
                 <!-- Row 1 – You can add more here later -->
             </GridPane>

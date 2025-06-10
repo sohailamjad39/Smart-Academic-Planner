@@ -64,40 +64,49 @@ public class AddTaskController {
         }
 
         try (Connection conn = DBConnection.getConnection()) {
-            // Get User ID
+            // Get current user ID
             String userIdSql = "SELECT UserID FROM Users WHERE Email = ?";
             PreparedStatement userIdStmt = conn.prepareStatement(userIdSql);
             userIdStmt.setString(1, currentUserEmail);
 
-            ResultSet rs = userIdStmt.executeQuery();
-            if (!rs.next()) {
+            ResultSet rsUser = userIdStmt.executeQuery();
+            if (!rsUser.next()) {
                 statusLabel.setText("❌ User not found!");
                 return;
             }
 
-            int userID = rs.getInt("UserID");
+            int userID = rsUser.getInt("UserID");
 
-            // Insert Task with SubjectName
-            String insertSql = """
-    INSERT INTO Tasks (UserID, SubjectName, TaskType, DueDate, EstHours, Priority)
-    VALUES (?, ?, ?, ?, ?, ?)
-""";
+            // Insert into Tasks
+            String insertTaskSql = """
+            INSERT INTO Tasks (SubjectName, TaskType, DueDate, EstHours, Priority, UserID)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """;
 
-            PreparedStatement insertStmt = conn.prepareStatement(insertSql);
+            PreparedStatement taskStmt = conn.prepareStatement(insertTaskSql, Statement.RETURN_GENERATED_KEYS);
+            taskStmt.setString(1, subject);
+            taskStmt.setString(2, taskType);
+            taskStmt.setString(3, dueDate.toString()); // ✅ Stored as 'YYYY-MM-DD'
+            taskStmt.setInt(4, estHours);
+            taskStmt.setString(5, "Medium"); // Default priority
+            taskStmt.setInt(6, userID);
 
-            insertStmt.setInt(1, userID);
-            insertStmt.setString(2, subject);
-            insertStmt.setString(3, taskType);
-            insertStmt.setDate(4, java.sql.Date.valueOf(dueDate));
-            insertStmt.setInt(5, estHours);
-            insertStmt.setString(6, "Medium"); // Default priority
-
-            insertStmt.setString(6, "Medium"); // Default priority
-
-            int rowsAffected = insertStmt.executeUpdate();
+            int rowsAffected = taskStmt.executeUpdate();
             if (rowsAffected > 0) {
-                statusLabel.setText("✅ Task saved successfully!");
-                clearFields();
+                ResultSet generatedKeys = taskStmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int taskID = generatedKeys.getInt(1);
+
+                    // ✅ Insert into TaskStatus safely
+                    String insertStatusSql = "INSERT INTO TaskStatus (TaskID, IsCompleted) VALUES (?, ?)";
+                    PreparedStatement statusStmt = conn.prepareStatement(insertStatusSql);
+                    statusStmt.setInt(1, taskID);
+                    statusStmt.setBoolean(2, false); // Default: not completed
+                    statusStmt.executeUpdate();
+
+                    statusLabel.setText("✅ Task saved successfully!");
+                    clearFields();
+                }
             } else {
                 statusLabel.setText("❌ Failed to save task.");
             }

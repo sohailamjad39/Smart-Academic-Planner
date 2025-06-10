@@ -9,11 +9,14 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDate;
 
 public class DashboardController {
 
-    @FXML private Label welcomeLabel;
-    @FXML private Label totalTasksLabel, inProgressLabel, missedLabel, completedLabel, dueSoonLabel;
+    @FXML
+    private Label welcomeLabel;
+    @FXML
+    private Label totalTasksLabel, inProgressLabel, missedLabel, completedLabel, dueSoonLabel;
 
     // Called on page load
     @FXML
@@ -38,42 +41,128 @@ public class DashboardController {
     private void loadTaskStats() {
         try (Connection conn = DBConnection.getConnection()) {
             int userID = getUserIDFromEmail(conn, UserSession.getCurrentUserEmail());
+            if (userID == -1) return;
 
-            if (userID == -1) {
-                System.out.println("❌ User not found!");
-                return;
-            }
+            String today = LocalDate.now().toString();
+            String nextWeek = LocalDate.now().plusDays(7).toString();
 
-            // Total tasks
-            totalTasksLabel.setText(getCount(conn, "SELECT COUNT(*) FROM Tasks WHERE UserID = ?", userID));
+            // DEBUG: Print critical values
+            System.out.println("=== TASK STATS DEBUG ===");
+            System.out.println("User ID: " + userID);
+            System.out.println("Today: " + today);
+            System.out.println("Next Week: " + nextWeek);
 
-            // Completed tasks
-            completedLabel.setText(getCount(conn, """
-                SELECT COUNT(*) FROM Tasks t
-                JOIN TaskStatus ts ON t.TaskID = ts.TaskID
-                WHERE ts.IsCompleted = 1 AND t.UserID = ?""", userID));
+            // Total Tasks
+            String total = getCount(conn, "SELECT COUNT(*) FROM Tasks WHERE UserID = ?", userID);
+            totalTasksLabel.setText(total);
+            System.out.println("Total Tasks: " + total);
 
-            // In progress tasks
-            inProgressLabel.setText(getCount(conn, """
-                SELECT COUNT(*) FROM Tasks t
-                JOIN TaskStatus ts ON t.TaskID = ts.TaskID
-                WHERE ts.IsCompleted = 0 AND DueDate > GETDATE() AND t.UserID = ?""", userID));
+            // Completed Tasks
+            String completed = getCount(conn, """
+                    SELECT COUNT(*) FROM Tasks t
+                    JOIN TaskStatus ts ON t.TaskID = ts.TaskID
+                    WHERE ts.IsCompleted = 1 AND t.UserID = ?""", userID);
+            completedLabel.setText(completed);
+            System.out.println("Completed: " + completed);
 
-            // Missed tasks
-            missedLabel.setText(getCount(conn, """
-                SELECT COUNT(*) FROM Tasks t
-                JOIN TaskStatus ts ON t.TaskID = ts.TaskID
-                WHERE ts.IsCompleted = 0 AND DueDate <= GETDATE() AND t.UserID = ?""", userID));
+            // Due Soon
+            String dueSoon = getCount(conn, """
+                            SELECT COUNT(*) FROM Tasks t
+                            JOIN TaskStatus ts ON t.TaskID = ts.TaskID
+                            WHERE ts.IsCompleted = 0 
+                              AND DATE(t.DueDate) BETWEEN ? AND ?
+                              AND t.UserID = ?""",
+                    today, nextWeek, userID);
+            dueSoonLabel.setText(dueSoon);
+            System.out.println("Due Soon: " + dueSoon);
 
-            // Due soon tasks (next 7 days)
-            dueSoonLabel.setText(getCount(conn, """
-                SELECT COUNT(*) FROM Tasks t
-                WHERE DueDate BETWEEN GETDATE() AND DATEADD(DAY, 7, GETDATE())
-                AND t.UserID = ?""", userID));
+            // In Progress Tasks = Uncompleted and due after today
+            String inProgress = getCount(conn, """
+                            SELECT COUNT(*) FROM Tasks t
+                            JOIN TaskStatus ts ON t.TaskID = ts.TaskID
+                            WHERE ts.IsCompleted = 0 
+                              AND DATE(t.DueDate) > DATE(?)
+                              AND t.UserID = ?""",
+                    today, userID);
+
+            inProgressLabel.setText(inProgress);
+            System.out.println("In Progress: " + inProgress);
+
+            // Missed Tasks
+            String missed = getCount(conn, """
+                            SELECT COUNT(*) FROM Tasks t
+                            JOIN TaskStatus ts ON t.TaskID = ts.TaskID
+                            WHERE ts.IsCompleted = 0 
+                              AND DATE(t.DueDate) < ?
+                              AND t.UserID = ?""",
+                    today, userID);
+
+            missedLabel.setText(missed);
+            System.out.println("Missed: " + missed);
+
+            // DEBUG: Run a diagnostic query
+            runDiagnosticQuery(conn, userID, today, nextWeek);
 
         } catch (Exception e) {
             e.printStackTrace();
-            loadDummyData(); // Fallback
+            loadDummyData();
+        }
+    }
+
+    // Add this new method for diagnostic query
+    private void runDiagnosticQuery(Connection conn, int userID, String today, String nextWeek) throws SQLException {
+        String diagQuery = """
+                SELECT 
+                    t.TaskID,
+                    t.SubjectName,
+                    t.DueDate,
+                    ts.IsCompleted,
+                    CASE 
+                        WHEN DATE(t.DueDate) < ? THEN 'Missed'
+                        WHEN DATE(t.DueDate) BETWEEN ? AND ? THEN 'Due Soon'
+                        WHEN DATE(t.DueDate) > ? THEN 'In Progress'
+                        ELSE 'Other'
+                    END AS Category
+                FROM Tasks t
+                JOIN TaskStatus ts ON t.TaskID = ts.TaskID
+                WHERE t.UserID = ?""";
+
+        try (PreparedStatement stmt = conn.prepareStatement(diagQuery)) {
+            stmt.setString(1, today);
+            stmt.setString(2, today);
+            stmt.setString(3, nextWeek);
+            stmt.setString(4, nextWeek);
+            stmt.setInt(5, userID);
+
+            ResultSet rs = stmt.executeQuery();
+            System.out.println("\n=== TASK CATEGORY DIAGNOSTICS ===");
+            while (rs.next()) {
+                System.out.printf("Task %d: %s | Due: %s | Completed: %s | Category: %s%n",
+                        rs.getInt("TaskID"),
+                        rs.getString("SubjectName"),
+                        rs.getString("DueDate"),
+                        rs.getBoolean("IsCompleted") ? "Yes" : "No",
+                        rs.getString("Category"));
+            }
+        }
+    }
+
+    // Updated helper method to handle date parameters
+    // Updated helper method to handle parameters in correct order
+    private String getCount(Connection conn, String query, Object... params) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            // Bind parameters in the order they appear in the query
+            for (int i = 0; i < params.length; i++) {
+                if (params[i] instanceof Integer) {
+                    stmt.setInt(i + 1, (Integer) params[i]);
+                } else if (params[i] instanceof String) {
+                    stmt.setString(i + 1, (String) params[i]);
+                }
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next() ? rs.getString(1) : "0";
+            }
         }
     }
 

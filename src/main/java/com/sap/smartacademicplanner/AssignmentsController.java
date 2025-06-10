@@ -24,7 +24,7 @@ public class AssignmentsController {
     @FXML private Label dueDateDetail;
     @FXML private Label estHoursDetail;
 
-    private final ObservableList<Task> assignmentData = FXCollections.observableArrayList();
+    private int selectedTaskId = -1;
 
     public void initialize() {
         setupTableColumns();
@@ -36,6 +36,7 @@ public class AssignmentsController {
                 subjectDetail.setText(newSelection.getSubject());
                 dueDateDetail.setText(newSelection.getDueDate().toString());
                 estHoursDetail.setText(String.valueOf(newSelection.getEstHours()));
+                selectedTaskId = newSelection.getTaskID();
             }
         });
     }
@@ -49,62 +50,73 @@ public class AssignmentsController {
     }
 
     private void loadAssignments() {
+        ObservableList<Task> assignments = FXCollections.observableArrayList();
+
         try (Connection conn = DBConnection.getConnection()) {
-            String sql = "SELECT t.*, ts.IsCompleted FROM Tasks t JOIN TaskStatus ts ON t.TaskID = ts.TaskID WHERE t.TaskType = ?";
+            String sql = """
+                SELECT t.*, ts.IsCompleted 
+                FROM Tasks t
+                LEFT JOIN TaskStatus ts ON t.TaskID = ts.TaskID
+                WHERE t.UserID = ? AND t.TaskType = 'Assignment'
+                """;
+
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, "Assignment");
+            stmt.setInt(1, UserSession.getCurrentUserID());
 
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                String subjectName = getSubjectName(rs.getInt("SubjectID"), conn);
-                boolean isCompleted = rs.getBoolean("IsCompleted");
+                boolean isCompleted = rs.getObject("IsCompleted", Boolean.class) != null && rs.getBoolean("IsCompleted");
                 String status = isCompleted ? "Completed" : "Pending";
 
-                assignmentData.add(new Task(
+                assignments.add(new Task(
                         rs.getInt("TaskID"),
-                        subjectName,
+                        rs.getString("SubjectName"),
                         rs.getString("TaskType"),
                         rs.getDate("DueDate").toLocalDate(),
                         rs.getInt("EstHours"),
+                        rs.getString("Priority"),
                         status
                 ));
             }
-
-            assignmentTable.setItems(assignmentData);
 
         } catch (Exception e) {
             System.out.println("❌ Failed to load assignments");
             e.printStackTrace();
         }
-    }
 
-    private String getSubjectName(int subjectID, Connection conn) {
-        try {
-            String sql = "SELECT Name FROM Subjects WHERE SubjectID = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, subjectID);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("Name");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "Unknown";
+        assignmentTable.setItems(assignments);
     }
 
     @FXML
     private void markAsCompleted() {
-        Task selected = assignmentTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selectedTaskId == -1) return;
 
         try (Connection conn = DBConnection.getConnection()) {
-            String sql = "UPDATE TaskStatus SET IsCompleted = 1 WHERE TaskID = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, selected.getTaskID());
-            stmt.executeUpdate();
+            // Check if TaskStatus exists first
+            String checkSql = "SELECT * FROM TaskStatus WHERE TaskID = ?";
+            PreparedStatement checkStmt = conn.prepareStatement(checkSql);
+            checkStmt.setInt(1, selectedTaskId);
+
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                // Update existing TaskStatus
+                String updateSql = "UPDATE TaskStatus SET IsCompleted = 1 WHERE TaskID = ?";
+                PreparedStatement updateStmt = conn.prepareStatement(updateSql);
+                updateStmt.setInt(1, selectedTaskId);
+                updateStmt.executeUpdate();
+            } else {
+                // Insert new TaskStatus if missing
+                String insertSql = "INSERT INTO TaskStatus (TaskID, IsCompleted) VALUES (?, ?)";
+                PreparedStatement insertStmt = conn.prepareStatement(insertSql);
+                insertStmt.setInt(1, selectedTaskId);
+                insertStmt.setBoolean(2, true);
+                insertStmt.executeUpdate();
+            }
+
             loadAssignments(); // Refresh table
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,13 +124,13 @@ public class AssignmentsController {
 
     @FXML
     private void deleteTask() {
-        Task selected = assignmentTable.getSelectionModel().getSelectedItem();
-        if (selected == null) return;
+        if (selectedTaskId == -1) return;
 
         try (Connection conn = DBConnection.getConnection()) {
-            conn.prepareStatement("DELETE FROM Tasks WHERE TaskID = " + selected.getTaskID()).executeUpdate();
-            conn.prepareStatement("DELETE FROM TaskStatus WHERE TaskID = " + selected.getTaskID()).executeUpdate();
-            loadAssignments(); // Refresh table
+            conn.prepareStatement("DELETE FROM Tasks WHERE TaskID = " + selectedTaskId).executeUpdate();
+            conn.prepareStatement("DELETE FROM TaskStatus WHERE TaskID = " + selectedTaskId).executeUpdate();
+            loadAssignments(); // Refresh list
+
         } catch (Exception e) {
             e.printStackTrace();
         }

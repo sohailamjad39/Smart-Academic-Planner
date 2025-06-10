@@ -39,19 +39,24 @@ public class HistoryController {
                 SELECT t.* 
                 FROM Tasks t
                 JOIN TaskStatus ts ON t.TaskID = ts.TaskID
-                WHERE ts.IsCompleted = 1""";
+                WHERE ts.IsCompleted = 1 AND t.UserID = ?
+                """;
 
             PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, UserSession.getCurrentUserID());
+
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                String subjectName = getSubjectName(rs.getInt("SubjectID"), conn);
+                // ✅ Safely parse DueDate without time component
+                String dueDateString = rs.getString("DueDate");
+                LocalDate dueDate = LocalDate.parse(dueDateString);
 
                 historyData.add(new Task(
                         rs.getInt("TaskID"),
-                        subjectName,
+                        rs.getString("SubjectName"),
                         rs.getString("TaskType"),
-                        rs.getDate("DueDate").toLocalDate(),
+                        dueDate,
                         rs.getInt("EstHours")
                 ));
             }
@@ -61,19 +66,6 @@ public class HistoryController {
         } catch (Exception e) {
             System.out.println("❌ Failed to load history");
             e.printStackTrace();
-        }
-    }
-
-    private String getSubjectName(int subjectID, Connection conn) {
-        try {
-            String sql = "SELECT Name FROM Subjects WHERE SubjectID = ?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, subjectID);
-            ResultSet rs = ps.executeQuery();
-            return rs.next() ? rs.getString("Name") : "Unknown";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Unknown";
         }
     }
 

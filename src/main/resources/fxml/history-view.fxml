@@ -13,7 +13,7 @@
     <top>
         <HBox spacing="10" alignment="CENTER_LEFT"
               style="-fx-padding: 10 20; -fx-background-color: #2c3e50;">
-            <Label text="📚 EduPlanner" style="-fx-font-size: 24px; -fx-text-fill: white;" />
+            <Label text="📚 EduPlanner" style="-fx-font-size: 24px; -fx-text-fill: white;"/>
             <Pane HBox.hgrow="ALWAYS"/>
             <Button text="⬅ Back to Dashboard" onAction="#goToDashboard" styleClass="switch-link"/>
         </HBox>
@@ -35,32 +35,6 @@
                     <TableColumn text="Est. Hours" fx:id="estHoursCol" prefWidth="100"/>
                 </columns>
             </TableView>
-
-            <!-- Details Section -->
-            <TitledPane text="Task Details" expanded="false">
-                <VBox spacing="10" style="-fx-padding: 10;">
-                    <HBox spacing="10">
-                        <Label text="Subject:" style="-fx-font-weight: bold; -fx-min-width: 100;" />
-                        <Label fx:id="subjectDetail" text="N/A" />
-                    </HBox>
-                    <HBox spacing="10">
-                        <Label text="Task Type:" style="-fx-font-weight: bold; -fx-min-width: 100;" />
-                        <Label fx:id="taskTypeDetail" text="N/A" />
-                    </HBox>
-                    <HBox spacing="10">
-                        <Label text="Due Date:" style="-fx-font-weight: bold; -fx-min-width: 100;" />
-                        <Label fx:id="dueDateDetail" text="N/A" />
-                    </HBox>
-                    <HBox spacing="10">
-                        <Label text="Completed On:" style="-fx-font-weight: bold; -fx-min-width: 100;" />
-                        <Label fx:id="completionDateDetail" text="N/A" />
-                    </HBox>
-                    <HBox spacing="10">
-                        <Label text="Est. Hours:" style="-fx-font-weight: bold; -fx-min-width: 100;" />
-                        <Label fx:id="estHoursDetail" text="N/A" />
-                    </HBox>
-                </VBox>
-            </TitledPane>
 
         </VBox>
     </center>

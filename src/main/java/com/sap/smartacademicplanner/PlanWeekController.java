@@ -55,25 +55,25 @@ public class PlanWeekController {
             int projects = Integer.parseInt(projectCountField.getText());
             int exams = Integer.parseInt(examCountField.getText());
 
-            if (weekdayFree < 0 || weekendFree < 0 ||
-                    assignments < 0 || quizzes < 0 || projects < 0 || exams < 0) {
+            // Validate inputs
+            if (weekdayFree < 0 || weekendFree < 0 || assignments < 0 || quizzes < 0 || projects < 0 || exams < 0) {
                 statusLabel.setText("❌ All inputs must be positive numbers.");
                 return;
             }
 
+            // Create task list with priorities
             List<TaskType> tasks = new ArrayList<>();
-
             for (int i = 0; i < assignments; i++) {
-                tasks.add(new TaskType("Assignment " + (i+1), "Assignment", weekdayFree + weekendFree));
+                tasks.add(new TaskType("Assignment " + (i+1), "Assignment", 1));
             }
             for (int i = 0; i < quizzes; i++) {
-                tasks.add(new TaskType("Quiz " + (i+1), "Quiz", weekdayFree + weekendFree));
+                tasks.add(new TaskType("Quiz " + (i+1), "Quiz", 2));
             }
             for (int i = 0; i < projects; i++) {
-                tasks.add(new TaskType("Project " + (i+1), "Project", weekdayFree + weekendFree));
+                tasks.add(new TaskType("Project " + (i+1), "Project", 3));
             }
             for (int i = 0; i < exams; i++) {
-                tasks.add(new TaskType("Exam " + (i+1), "Exam", weekdayFree + weekendFree));
+                tasks.add(new TaskType("Exam " + (i+1), "Exam", 4));
             }
 
             if (tasks.isEmpty()) {
@@ -82,47 +82,61 @@ public class PlanWeekController {
                 return;
             }
 
-            // Sort by priority
-            tasks.sort((t1, t2) -> Integer.compare(t2.priorityLevel(), t1.priorityLevel()));
+            // Sort by priority (highest first)
+            tasks.sort((t1, t2) -> Integer.compare(t2.priorityLevel, t1.priorityLevel));
 
-            // Weekly slots
-            Map<String, Double> weeklySlots = new LinkedHashMap<>();
-            weeklySlots.put("Monday", weekdayFree);
-            weeklySlots.put("Tuesday", weekdayFree);
-            weeklySlots.put("Wednesday", weekdayFree);
-            weeklySlots.put("Thursday", weekdayFree);
-            weeklySlots.put("Friday", weekdayFree);
-            weeklySlots.put("Saturday", weekendFree);
-            weeklySlots.put("Sunday", weekendFree);
+            // Create day structure with available hours
+            List<DaySlot> weekSchedule = new ArrayList<>();
+            weekSchedule.add(new DaySlot("Monday", weekdayFree));
+            weekSchedule.add(new DaySlot("Tuesday", weekdayFree));
+            weekSchedule.add(new DaySlot("Wednesday", weekdayFree));
+            weekSchedule.add(new DaySlot("Thursday", weekdayFree));
+            weekSchedule.add(new DaySlot("Friday", weekdayFree));
+            weekSchedule.add(new DaySlot("Saturday", weekendFree));
+            weekSchedule.add(new DaySlot("Sunday", weekendFree));
 
             // Schedule tasks
             List<ScheduledTask> scheduledTasks = new ArrayList<>();
-
-            Map<String, Double> remainingHours = new HashMap<>(weeklySlots);
+            int dayIndex = 0;
 
             for (TaskType task : tasks) {
-                String bestDay = getBestDay(task, remainingHours);
-                double timeToAssign = getTimeForTask(task, remainingHours.get(bestDay));
+                double timeRequired = calculateTimeRequired(task);
+                boolean scheduled = false;
 
-                if (timeToAssign > 0 && remainingHours.get(bestDay) >= timeToAssign) {
-                    scheduledTasks.add(new ScheduledTask(
-                            bestDay,
-                            task.name,
-                            task.type,
-                            String.format("%.1f hours", timeToAssign),
-                            task.priorityName()
-                    ));
+                // Try to schedule in available slots across the week
+                for (int attempt = 0; attempt < weekSchedule.size() * 2; attempt++) {
+                    DaySlot currentDay = weekSchedule.get(dayIndex);
 
-                    remainingHours.put(bestDay, remainingHours.get(bestDay) - timeToAssign);
-                } else {
+                    if (currentDay.remainingHours >= timeRequired) {
+                        scheduledTasks.add(new ScheduledTask(
+                                currentDay.dayName,
+                                task.name,
+                                task.type,
+                                String.format("%.1f hours", timeRequired),
+                                getPriorityName(task.priorityLevel)
+                        ));
+                        currentDay.remainingHours -= timeRequired;
+                        scheduled = true;
+                        break;
+                    }
+
+                    // Move to next day (round-robin)
+                    dayIndex = (dayIndex + 1) % weekSchedule.size();
+                }
+
+                // Handle unscheduled tasks
+                if (!scheduled) {
                     scheduledTasks.add(new ScheduledTask(
                             "⚠ Not Scheduled",
                             task.name,
                             task.type,
                             "Not enough time!",
-                            task.priorityName()
+                            getPriorityName(task.priorityLevel)
                     ));
                 }
+
+                // Move to next day for next task
+                dayIndex = (dayIndex + 1) % weekSchedule.size();
             }
 
             scheduleTable.setItems(FXCollections.observableArrayList(scheduledTasks));
@@ -133,6 +147,38 @@ public class PlanWeekController {
         } catch (Exception e) {
             statusLabel.setText("❌ Error: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    private double calculateTimeRequired(TaskType task) {
+        // Base time + priority adjustment
+        return switch (task.type) {
+            case "Assignment" -> 1.5;
+            case "Quiz" -> 1.0;
+            case "Project" -> 2.5;
+            case "Exam" -> 3.0;
+            default -> 1.0;
+        } * (0.8 + (task.priorityLevel * 0.1));
+    }
+
+    private String getPriorityName(int priorityLevel) {
+        return switch (priorityLevel) {
+            case 4 -> "Highest";
+            case 3 -> "High";
+            case 2 -> "Medium";
+            case 1 -> "Low";
+            default -> "Lowest";
+        };
+    }
+
+    // Helper class for day slots
+    private static class DaySlot {
+        String dayName;
+        double remainingHours;
+
+        DaySlot(String dayName, double hours) {
+            this.dayName = dayName;
+            this.remainingHours = hours;
         }
     }
 
@@ -195,10 +241,12 @@ public class PlanWeekController {
     private static class TaskType {
         String name;
         String type;
+        int priorityLevel;
 
         TaskType(String name, String type, double totalFreeHours) {
             this.name = name;
             this.type = type;
+            this.priorityLevel = priorityLevel();
         }
 
         int priorityLevel() {

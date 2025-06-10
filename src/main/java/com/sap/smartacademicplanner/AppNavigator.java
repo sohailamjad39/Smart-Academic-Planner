@@ -22,7 +22,7 @@ public class AppNavigator {
             FXMLLoader loader = new FXMLLoader(AppNavigator.class.getResource("/fxml/login-view.fxml"));
             mainLayout = loader.load();
 
-            Scene scene = new Scene(mainLayout, 500, 600);
+            Scene scene = new Scene(mainLayout, 800, 600);
             scene.getStylesheets().add(AppNavigator.class.getResource("/styles.css").toExternalForm());
 
             mainStage.setScene(scene);
@@ -81,7 +81,7 @@ public class AppNavigator {
             FXMLLoader loader = new FXMLLoader(AppNavigator.class.getResource(path));
             BorderPane loginView = loader.load();
 
-            Scene scene = new Scene(loginView, 500, 600);
+            Scene scene = new Scene(loginView, 800, 600);
             mainStage.setScene(scene);
             mainStage.setTitle("EduPlanner | Login");
             mainStage.centerOnScreen();
@@ -97,11 +97,11 @@ public class AppNavigator {
     }
 
     public static void navigateToAddTask() {
-        navigateTo("add-task-view.fxml", "Add New Task", 500, 600);
+        navigateTo("add-task-view.fxml", "Add New Task", 800, 600);
     }
 
     public static void navigateToChangePassword() {
-        navigateTo("change-password-view.fxml", "Change Password", 500, 600);
+        navigateTo("change-password-view.fxml", "Change Password", 800, 600);
     }
 
     public static void navigateToPlanWeek() {
@@ -117,7 +117,7 @@ public class AppNavigator {
     }
 
     public static void navigateToSignUp() {
-        navigateTo("signup-view.fxml", "Sign Up", 500, 600);
+        navigateTo("signup-view.fxml", "Sign Up", 800, 600);
     }
 
     public static void navigateToOverview() {

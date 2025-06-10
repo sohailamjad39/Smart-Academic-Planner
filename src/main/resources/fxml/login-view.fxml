@@ -33,7 +33,7 @@
             <Label fx:id="statusLabel" styleClass="status-label"/>
 
             <!-- Sign Up Link -->
-            <Hyperlink text="Signup if you don't have an account" onAction="#switchToSignUp" styleClass="switch-link"/>
+            <Hyperlink text="Signup if you don't have an account" onAction="#switchToSignUp" styleClass="switch-link-ls"/>
         </VBox>
     </center>
 

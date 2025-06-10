@@ -39,7 +39,7 @@
             <Label fx:id="statusLabel" styleClass="status-label"/>
 
             <!-- Login Link -->
-            <Hyperlink text="Login if you already have an account" onAction="#switchToLogin" styleClass="switch-link"/>
+            <Hyperlink text="Login if you already have an account" onAction="#switchToLogin" styleClass="switch-link-ls"/>
         </VBox>
     </center>
 
